@@ -2,8 +2,28 @@ import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Logger } from '@nestjs/common';
 import { Job } from 'bullmq';
 import { TasksService } from './tasks.service';
+import { TaskDocument } from './schemas/task.schema';
+import { fileProcessingHandler } from './handlers/file-processing.handler';
+import { reportGenerationHandler } from './handlers/report-generation.handler';
+import { aiAnalysisHandler } from './handlers/ai-analysis.handler';
 
-@Processor('tasks')
+// ─── Handler registry ─────────────────────────────────────────────────────────
+
+type ProgressFn = (progress: number, detail: string) => Promise<void>;
+type TaskHandlerFn = (
+  payload: Record<string, unknown>,
+  onProgress: ProgressFn,
+) => Promise<Record<string, unknown>>;
+
+const HANDLERS: Record<string, TaskHandlerFn> = {
+  'file-processing': fileProcessingHandler,
+  'report-generation': reportGenerationHandler,
+  'ai-analysis': aiAnalysisHandler,
+};
+
+// ─── Processor ────────────────────────────────────────────────────────────────
+
+@Processor('tasks', { concurrency: 3 })
 export class TasksProcessor extends WorkerHost {
   private readonly logger = new Logger(TasksProcessor.name);
 
@@ -12,51 +32,55 @@ export class TasksProcessor extends WorkerHost {
   }
 
   async process(job: Job): Promise<unknown> {
-    const { taskId, ...payload } = job.data as {
-      taskId: string;
-      [key: string]: unknown;
-    };
+    const { taskId } = job.data as { taskId: string };
 
-    this.logger.log(`Processing job [${job.name}] taskId=${taskId}`);
-    await this.tasksService.updateStatus(taskId, 'active');
+    // Guard: task may have been cancelled before worker picked it up
+    let task: TaskDocument;
+    try {
+      task = await this.tasksService.findOne(taskId);
+    } catch {
+      this.logger.warn(`Job ${job.id}: task=${taskId} not found, skipping`);
+      return null;
+    }
+
+    if (task.status === 'cancelled') {
+      this.logger.warn(`Job ${job.id}: task=${taskId} is cancelled, skipping`);
+      return null;
+    }
+
+    const handler = HANDLERS[task.type];
+    if (!handler) {
+      const error = `No handler registered for task type: "${task.type}"`;
+      this.logger.error(error);
+      await this.tasksService.markFailed(taskId, error);
+      throw new Error(error);
+    }
+
+    this.logger.log(
+      `Processing task=${taskId} type=${task.type} attempt=${job.attemptsMade + 1}`,
+    );
+    await this.tasksService.markProcessing(taskId);
+
+    const onProgress: ProgressFn = (progress, detail) =>
+      this.tasksService.updateProgress(taskId, progress, {
+        event: 'progress',
+        detail,
+      });
 
     try {
-      const result = await this.handleJobType(job.name, payload);
-      await this.tasksService.updateStatus(
-        taskId,
-        'completed',
-        JSON.stringify(result),
+      const result = await handler(
+        task.payload as Record<string, unknown>,
+        onProgress,
       );
-      this.logger.log(`Completed job [${job.name}] taskId=${taskId}`);
+      await this.tasksService.markCompleted(taskId, JSON.stringify(result));
+      this.logger.log(`Completed task=${taskId}`);
       return result;
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Unknown error';
-      this.logger.error(
-        `Failed job [${job.name}] taskId=${taskId}: ${message}`,
-      );
-      await this.tasksService.updateStatus(taskId, 'failed', null, message);
-      throw err;
-    }
-  }
-
-  private async handleJobType(
-    type: string,
-    payload: Record<string, unknown>,
-  ): Promise<Record<string, unknown>> {
-    // Simulate async processing (2–5 seconds)
-    await new Promise((resolve) =>
-      setTimeout(resolve, 2000 + Math.random() * 3000),
-    );
-
-    switch (type) {
-      case 'email':
-        return { sent: true, to: payload['to'] ?? 'user@example.com' };
-      case 'report':
-        return { generated: true, rows: Math.floor(Math.random() * 1000) };
-      case 'data-sync':
-        return { synced: true, records: Math.floor(Math.random() * 500) };
-      default:
-        return { processed: true, type, payload };
+      const message =
+        err instanceof Error ? err.message : 'Unknown processing error';
+      this.logger.error(`Failed task=${taskId}: ${message}`);
+      await this.tasksService.markFailed(taskId, message);
+      throw err; // re-throw so BullMQ applies retry backoff
     }
   }
 }

@@ -1,13 +1,10 @@
-import { IsIn, IsNotEmpty, IsObject, IsOptional, IsString } from 'class-validator';
-
-export const TASK_TYPES = ['email', 'report', 'data-sync', 'custom'] as const;
-export type TaskType = (typeof TASK_TYPES)[number];
+import { IsIn, IsObject, IsOptional, IsString } from 'class-validator';
+import { TASK_TYPES } from '@task-processing-engine/shared';
 
 export class CreateTaskDto {
   @IsString()
-  @IsNotEmpty()
-  @IsIn(TASK_TYPES)
-  type: TaskType;
+  @IsIn([...TASK_TYPES])
+  type: string;
 
   @IsObject()
   @IsOptional()

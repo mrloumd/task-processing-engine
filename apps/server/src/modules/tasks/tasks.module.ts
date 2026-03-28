@@ -13,5 +13,6 @@ import { TasksProcessor } from './tasks.processor';
   ],
   controllers: [TasksController],
   providers: [TasksService, TasksProcessor],
+  exports: [TasksService],
 })
 export class TasksModule {}

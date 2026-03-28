@@ -5,10 +5,13 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
+import { QueryTasksDto } from './dto/query-tasks.dto';
 
 @Controller('tasks')
 export class TasksController {
@@ -21,12 +24,24 @@ export class TasksController {
   }
 
   @Get()
-  findAll() {
-    return this.tasksService.findAll();
+  findAll(@Query() query: QueryTasksDto) {
+    return this.tasksService.findAll(query);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.tasksService.findOne(id);
+  }
+
+  @Patch(':id/retry')
+  @HttpCode(HttpStatus.OK)
+  retry(@Param('id') id: string) {
+    return this.tasksService.retry(id);
+  }
+
+  @Patch(':id/cancel')
+  @HttpCode(HttpStatus.OK)
+  cancel(@Param('id') id: string) {
+    return this.tasksService.cancel(id);
   }
 }
