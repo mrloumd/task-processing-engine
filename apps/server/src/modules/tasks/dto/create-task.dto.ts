@@ -1,5 +1,6 @@
 import { IsIn, IsObject, IsOptional, IsString } from 'class-validator';
-import { TASK_TYPES } from '@task-processing-engine/shared';
+
+const TASK_TYPES = ['file-processing', 'report-generation', 'ai-analysis'] as const;
 
 export class CreateTaskDto {
   @IsString()

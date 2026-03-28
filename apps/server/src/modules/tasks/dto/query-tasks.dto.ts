@@ -1,6 +1,6 @@
 import { IsIn, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
 import { Type } from 'class-transformer';
-import { TASK_TYPES } from '@task-processing-engine/shared';
+const TASK_TYPES = ['file-processing', 'report-generation', 'ai-analysis'] as const;
 
 const TASK_STATUSES = [
   'pending',
