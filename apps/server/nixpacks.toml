@@ -1,0 +1,8 @@
+[phases.install]
+cmds = ["cd ../.. && npm install"]
+
+[phases.build]
+cmds = ["cd ../../packages/shared && npm run build", "npm run build"]
+
+[start]
+cmd = "node dist/main.js"
