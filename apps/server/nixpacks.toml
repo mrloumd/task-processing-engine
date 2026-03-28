@@ -2,7 +2,7 @@
 cmds = ["cd ../.. && npm install"]
 
 [phases.build]
-cmds = ["cd ../../packages/shared && npm run build", "npm run build"]
+cmds = ["cd ../.. && npm run build -w @task-processing-engine/shared && npm run build -w server"]
 
 [start]
 cmd = "node dist/main.js"
