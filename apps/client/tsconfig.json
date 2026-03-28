@@ -19,7 +19,8 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@task-processing-engine/shared": ["../../packages/shared/index.ts"]
     }
   },
   "include": [
