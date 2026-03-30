@@ -84,7 +84,7 @@ export function TaskList({
                   <p className="truncate text-sm font-semibold capitalize text-foreground group-hover:text-brand">
                     {task.type.replace(/-/g, ' ')}
                   </p>
-                  <p className="text-xs text-muted">{relativeTime(task.createdAt)}</p>
+                  <p className="text-xs text-muted">{relativeTime(task.created_at)}</p>
                 </div>
               </div>
 

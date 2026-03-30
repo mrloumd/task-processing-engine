@@ -36,12 +36,12 @@ export interface TaskItem {
   progress: number;
   result: string | null;
   error: string | null;
-  retryCount: number;
-  activityLog: ActivityLogEntry[];
-  createdAt: string;
-  updatedAt: string;
-  startedAt: string | null;
-  completedAt: string | null;
+  retry_count: number;
+  activity_log: ActivityLogEntry[];
+  created_at: string;
+  updated_at: string;
+  started_at: string | null;
+  completed_at: string | null;
 }
 
 // ─── API Contracts ────────────────────────────────────────────────────────────

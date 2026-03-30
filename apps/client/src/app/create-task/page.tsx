@@ -3,7 +3,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useCreateTask } from '@/hooks/useTasks';
+import { useCreateTask, useTasks } from '@/hooks/useTasks';
+import { TaskStatusBadge } from '@/components/tasks/TaskStatusBadge';
+import { ProgressBar } from '@/components/tasks/ProgressBar';
 import type { TaskType } from '@task-processing-engine/shared';
 import { TASK_TYPES } from '@task-processing-engine/shared';
 
@@ -28,12 +30,130 @@ const TYPE_META: Record<TaskType, { icon: string; label: string; description: st
   },
 };
 
+const TYPE_ICONS: Record<TaskType, string> = {
+  'file-processing':   '📄',
+  'report-generation': '📊',
+  'ai-analysis':       '🤖',
+};
+
+const STATUS_CONFIG: Record<string, { dot: string; border: string; label: string }> = {
+  pending:    { dot: 'bg-slate-400',          border: 'border-l-slate-500',   label: 'Pending' },
+  queued:     { dot: 'bg-amber-400',          border: 'border-l-amber-500',   label: 'Queued' },
+  processing: { dot: 'bg-brand animate-pulse', border: 'border-l-brand',      label: 'Processing' },
+  completed:  { dot: 'bg-emerald-400',        border: 'border-l-emerald-500', label: 'Completed' },
+  failed:     { dot: 'bg-red-400',            border: 'border-l-red-500',     label: 'Failed' },
+  cancelled:  { dot: 'bg-slate-600',          border: 'border-l-slate-600',   label: 'Cancelled' },
+};
+
+function relativeTime(dateStr: string): string {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const s = Math.floor(diff / 1000);
+  if (s < 60) return `${s}s ago`;
+  const m = Math.floor(s / 60);
+  if (m < 60) return `${m}m ago`;
+  return `${Math.floor(m / 60)}h ago`;
+}
+
+// ─── Queue Visualizer ─────────────────────────────────────────────────────────
+
+function QueueVisualizer() {
+  const { data, isLoading } = useTasks({ limit: 20 }, 2000);
+  const tasks = data?.tasks ?? [];
+
+  const counts = tasks.reduce<Record<string, number>>((acc, t) => {
+    acc[t.status] = (acc[t.status] ?? 0) + 1;
+    return acc;
+  }, {});
+
+  if (isLoading) {
+    return (
+      <div className="space-y-2">
+        {[...Array(3)].map((_, i) => (
+          <div key={i} className="h-14 animate-pulse rounded-xl bg-surface-raised" />
+        ))}
+      </div>
+    );
+  }
+
+  if (!tasks.length) {
+    return (
+      <div className="rounded-xl border border-dashed border-border px-4 py-8 text-center">
+        <p className="text-sm text-muted">No tasks yet. Submit one above to see the queue.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-3">
+      {/* Status summary pills */}
+      <div className="flex flex-wrap gap-2">
+        {Object.entries(STATUS_CONFIG).map(([status, cfg]) =>
+          counts[status] ? (
+            <span
+              key={status}
+              className="flex items-center gap-1.5 rounded-full border border-border bg-surface-raised px-2.5 py-1 text-[11px] font-medium text-foreground"
+            >
+              <span className={`h-1.5 w-1.5 rounded-full ${cfg.dot}`} />
+              {cfg.label}
+              <span className="text-muted">×{counts[status]}</span>
+            </span>
+          ) : null
+        )}
+      </div>
+
+      <ul className="space-y-1.5">
+        {tasks.map((task) => {
+          const cfg = STATUS_CONFIG[task.status] ?? STATUS_CONFIG.pending;
+          return (
+            <li key={task._id}>
+              <Link
+                href={`/tasks/${task._id}`}
+                className={`group flex items-center gap-3 rounded-xl border border-border border-l-2 bg-surface px-4 py-3 transition-all hover:border-brand/40 hover:shadow-sm ${cfg.border}`}
+              >
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-surface-raised text-base">
+                  {TYPE_ICONS[task.type as TaskType] ?? '⚙️'}
+                </span>
+
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="truncate text-sm font-medium capitalize text-foreground group-hover:text-brand">
+                      {task.type.replace(/-/g, ' ')}
+                    </p>
+                    <div className="flex shrink-0 items-center gap-1.5">
+                      <span className={`h-1.5 w-1.5 rounded-full ${cfg.dot}`} />
+                      <span className="text-[11px] font-medium text-muted">{cfg.label}</span>
+                    </div>
+                  </div>
+
+                  {task.status === 'processing' ? (
+                    <div className="mt-1.5">
+                      <ProgressBar value={task.progress} pulse />
+                    </div>
+                  ) : (
+                    <p className="mt-0.5 text-[11px] text-muted">{relativeTime(task.created_at)}</p>
+                  )}
+                </div>
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
+type Mode = 'single' | 'queue';
+
 export default function CreateTaskPage() {
   const router = useRouter();
   const { mutateAsync: createTask, isPending, isError, error } = useCreateTask();
 
+  const [mode, setMode] = useState<Mode>('single');
   const [selectedType, setSelectedType] = useState<TaskType>('file-processing');
   const [payloadValue, setPayloadValue] = useState('');
+  const [queuedCount, setQueuedCount] = useState(0);
 
   const meta = TYPE_META[selectedType];
 
@@ -44,7 +164,13 @@ export default function CreateTaskPage() {
       payload[meta.payloadField.name] = payloadValue.trim();
     }
     const task = await createTask({ type: selectedType, payload });
-    router.push(`/tasks/${task._id}`);
+
+    if (mode === 'single') {
+      router.push(`/tasks/${task._id}`);
+    } else {
+      setQueuedCount((n) => n + 1);
+      setPayloadValue('');
+    }
   }
 
   return (
@@ -58,9 +184,35 @@ export default function CreateTaskPage() {
         Back to dashboard
       </Link>
 
-      <div>
-        <h1 className="text-xl font-bold text-foreground">Create a Task</h1>
-        <p className="mt-0.5 text-sm text-muted">Choose a task type and submit it to the processing queue.</p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-xl font-bold text-foreground">Create a Task</h1>
+          <p className="mt-0.5 text-sm text-muted">Choose a task type and submit it to the processing queue.</p>
+        </div>
+
+        {/* Mode toggle */}
+        <div className="flex shrink-0 rounded-xl border border-border bg-surface-raised p-1">
+          <button
+            onClick={() => setMode('single')}
+            className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
+              mode === 'single'
+                ? 'bg-surface text-foreground shadow-sm'
+                : 'text-muted hover:text-foreground'
+            }`}
+          >
+            Single
+          </button>
+          <button
+            onClick={() => setMode('queue')}
+            className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
+              mode === 'queue'
+                ? 'bg-surface text-foreground shadow-sm'
+                : 'text-muted hover:text-foreground'
+            }`}
+          >
+            Queue
+          </button>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -137,6 +289,8 @@ export default function CreateTaskPage() {
                 </svg>
                 Submitting…
               </>
+            ) : mode === 'queue' ? (
+              'Queue Task'
             ) : (
               'Submit Task'
             )}
@@ -150,6 +304,23 @@ export default function CreateTaskPage() {
         </div>
 
       </form>
+
+      {/* Queue visualizer */}
+      {mode === 'queue' && (
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted">Queue</p>
+            {queuedCount > 0 && (
+              <span className="flex items-center gap-1.5 text-xs text-muted">
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-brand" />
+                {queuedCount} submitted · polling every 2s
+              </span>
+            )}
+          </div>
+          <QueueVisualizer />
+        </div>
+      )}
+
     </div>
   );
 }

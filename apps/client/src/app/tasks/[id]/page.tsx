@@ -220,18 +220,19 @@ export default function TaskDetailPage({ params }: Props) {
 
         {/* Details */}
         <dl className="divide-y divide-border px-6">
-          <Row label="Status">
+          <Row label="status">
             <span className="capitalize">{task.status}</span>
-            {task.retryCount > 0 && (
-              <span className="ml-2 text-xs text-amber-400">({task.retryCount} retry)</span>
+            {task.retry_count > 0 && (
+              <span className="ml-2 text-xs text-amber-400">(retry_count: {task.retry_count})</span>
             )}
           </Row>
-          <Row label="Created">{new Date(task.createdAt).toLocaleString()}</Row>
-          {task.startedAt && <Row label="Started">{new Date(task.startedAt).toLocaleString()}</Row>}
-          {task.completedAt && <Row label="Finished">{new Date(task.completedAt).toLocaleString()}</Row>}
+          <Row label="created_at">{new Date(task.created_at).toLocaleString()}</Row>
+          <Row label="updated_at">{new Date(task.updated_at).toLocaleString()}</Row>
+          {task.started_at && <Row label="started_at">{new Date(task.started_at).toLocaleString()}</Row>}
+          {task.completed_at && <Row label="completed_at">{new Date(task.completed_at).toLocaleString()}</Row>}
 
           {Object.keys(task.payload).length > 0 && (
-            <Row label="Payload">
+            <Row label="payload">
               <pre className="whitespace-pre-wrap break-all rounded-lg bg-surface-raised px-3 py-2 font-mono text-xs text-muted">
                 {JSON.stringify(task.payload, null, 2)}
               </pre>
@@ -239,7 +240,7 @@ export default function TaskDetailPage({ params }: Props) {
           )}
 
           {task.status === 'completed' && parsedResult !== null && (
-            <Row label="Result">
+            <Row label="result">
               <div className="rounded-xl border border-emerald-800/50 bg-emerald-950/30 px-3 py-2.5">
                 <pre className="whitespace-pre-wrap break-all font-mono text-xs text-emerald-400">
                   {JSON.stringify(parsedResult, null, 2)}
@@ -249,7 +250,7 @@ export default function TaskDetailPage({ params }: Props) {
           )}
 
           {task.status === 'failed' && task.error && (
-            <Row label="Error">
+            <Row label="error">
               <div className="rounded-xl border border-red-800/50 bg-red-950/30 px-3 py-2.5">
                 <p className="text-xs text-red-400">{task.error}</p>
               </div>
@@ -258,12 +259,12 @@ export default function TaskDetailPage({ params }: Props) {
         </dl>
 
         {/* Activity log */}
-        {task.activityLog?.length > 0 && (
+        {task.activity_log?.length > 0 && (
           <div className="border-t border-border px-6 py-5">
             <p className="mb-4 text-xs font-semibold uppercase tracking-wide text-muted">
               Activity Log
             </p>
-            <ActivityLog entries={task.activityLog} />
+            <ActivityLog entries={task.activity_log} />
           </div>
         )}
 

@@ -35,7 +35,7 @@ export class TasksService {
       type: dto.type,
       payload: dto.payload ?? {},
       status: 'pending',
-      activityLog: [
+      activity_log: [
         {
           timestamp: new Date(),
           event: 'created',
@@ -53,7 +53,7 @@ export class TasksService {
       {
         $set: { status: 'queued' },
         $push: {
-          activityLog: {
+          activity_log: {
             timestamp: new Date(),
             event: 'queued',
             detail: 'Job added to the processing queue',
@@ -85,7 +85,7 @@ export class TasksService {
     const skip = (page - 1) * limit;
 
     const [tasks, total] = await Promise.all([
-      this.taskModel.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit).exec(),
+      this.taskModel.find(filter).sort({ created_at: -1 }).skip(skip).limit(limit).exec(),
       this.taskModel.countDocuments(filter).exec(),
     ]);
 
@@ -107,7 +107,7 @@ export class TasksService {
       throw new BadRequestException('Only failed tasks can be retried');
     }
 
-    const retryCount = task.retryCount + 1;
+    const retry_count = task.retry_count + 1;
 
     await this.taskModel.updateOne(
       { _id: id },
@@ -117,15 +117,15 @@ export class TasksService {
           progress: 0,
           error: null,
           result: null,
-          startedAt: null,
-          completedAt: null,
-          retryCount,
+          started_at: null,
+          completed_at: null,
+          retry_count,
         },
         $push: {
-          activityLog: {
+          activity_log: {
             timestamp: new Date(),
             event: 'retry_requested',
-            detail: `Retry attempt #${retryCount}`,
+            detail: `Retry attempt #${retry_count}`,
           },
         },
       },
@@ -137,7 +137,7 @@ export class TasksService {
       { _id: id },
       {
         $push: {
-          activityLog: {
+          activity_log: {
             timestamp: new Date(),
             event: 'queued',
             detail: 'Task re-queued for processing',
@@ -146,7 +146,7 @@ export class TasksService {
       },
     );
 
-    this.logger.log(`Task retried: id=${id} attempt=#${retryCount}`);
+    this.logger.log(`Task retried: id=${id} attempt=#${retry_count}`);
     return this.taskModel.findById(id).exec() as Promise<TaskDocument>;
   }
 
@@ -171,7 +171,7 @@ export class TasksService {
       {
         $set: { status: 'cancelled' },
         $push: {
-          activityLog: {
+          activity_log: {
             timestamp: new Date(),
             event: 'cancelled',
             detail: 'Task cancelled by user',
@@ -190,9 +190,9 @@ export class TasksService {
     await this.taskModel.updateOne(
       { _id: id },
       {
-        $set: { status: 'processing', startedAt: new Date(), progress: 0 },
+        $set: { status: 'processing', started_at: new Date(), progress: 0 },
         $push: {
-          activityLog: {
+          activity_log: {
             timestamp: new Date(),
             event: 'processing_started',
             detail: 'Worker picked up the task',
@@ -210,7 +210,7 @@ export class TasksService {
     const update: Record<string, unknown> = { $set: { progress } };
     if (logEntry) {
       (update as Record<string, unknown>)['$push'] = {
-        activityLog: {
+        activity_log: {
           timestamp: new Date(),
           event: logEntry.event,
           detail: logEntry.detail,
@@ -224,9 +224,9 @@ export class TasksService {
     await this.taskModel.updateOne(
       { _id: id },
       {
-        $set: { status: 'completed', result, progress: 100, completedAt: new Date() },
+        $set: { status: 'completed', result, progress: 100, completed_at: new Date() },
         $push: {
-          activityLog: {
+          activity_log: {
             timestamp: new Date(),
             event: 'completed',
             detail: 'Task completed successfully',
@@ -242,7 +242,7 @@ export class TasksService {
       {
         $set: { status: 'failed', error },
         $push: {
-          activityLog: { timestamp: new Date(), event: 'failed', detail: error },
+          activity_log: { timestamp: new Date(), event: 'failed', detail: error },
         },
       },
     );
