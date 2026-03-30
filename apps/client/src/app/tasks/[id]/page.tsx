@@ -46,8 +46,8 @@ function StatusStepper({ status }: { status: TaskStatus }) {
 
         const circleStyle = isTerminalStep
           ? isFailed
-            ? 'border-red-400 bg-red-950/40 text-red-400'
-            : 'border-slate-600 bg-slate-900/60 text-slate-400'
+            ? 'border-red-400 bg-red-100 text-red-600 dark:bg-red-950/40 dark:text-red-400'
+            : 'border-slate-400 bg-slate-100 text-slate-500 dark:border-slate-600 dark:bg-slate-900/60 dark:text-slate-400'
           : isCompleted
           ? 'border-brand bg-brand text-white'
           : isCurrent
@@ -60,7 +60,7 @@ function StatusStepper({ status }: { status: TaskStatus }) {
           ? isFailed ? 'text-red-400' : 'text-slate-500'
           : 'text-muted';
 
-        const lineStyle = isCompleted ? 'bg-brand' : isFailed && i === 1 ? 'bg-red-900' : 'bg-border';
+        const lineStyle = isCompleted ? 'bg-brand' : isFailed && i === 1 ? 'bg-red-300 dark:bg-red-900' : 'bg-border';
 
         return (
           <div key={step.key} className="flex items-center">
@@ -80,9 +80,9 @@ function StatusStepper({ status }: { status: TaskStatus }) {
       {/* Extra terminal badge */}
       {(isFailed || isCancelled) && (
         <div className="flex items-center">
-          <div className={`mb-4 h-0.5 w-10 sm:w-16 ${isFailed ? 'bg-red-900' : 'bg-border'}`} />
+          <div className={`mb-4 h-0.5 w-10 sm:w-16 ${isFailed ? 'bg-red-300 dark:bg-red-900' : 'bg-border'}`} />
           <div className="flex flex-col items-center">
-            <div className={`flex h-8 w-8 items-center justify-center rounded-full border-2 text-xs font-bold ${isFailed ? 'border-red-400 bg-red-950/40 text-red-400' : 'border-slate-600 bg-slate-900 text-slate-400'}`}>
+            <div className={`flex h-8 w-8 items-center justify-center rounded-full border-2 text-xs font-bold ${isFailed ? 'border-red-400 bg-red-100 text-red-600 dark:bg-red-950/40 dark:text-red-400' : 'border-slate-400 bg-slate-100 text-slate-500 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-400'}`}>
               {isFailed ? '✕' : '○'}
             </div>
             <span className={`mt-1 text-[10px] font-medium ${isFailed ? 'text-red-400' : 'text-slate-500'}`}>
@@ -130,8 +130,8 @@ export default function TaskDetailPage({ params }: Props) {
           <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="m15 18-6-6 6-6" /></svg>
           Back to tasks
         </Link>
-        <div className="rounded-2xl border border-red-800/50 bg-red-950/30 p-5">
-          <p className="text-sm font-medium text-red-400">Task not found or failed to load.</p>
+        <div className="rounded-2xl border border-red-300 bg-red-50 p-5 dark:border-red-800/50 dark:bg-red-950/30">
+          <p className="text-sm font-medium text-red-700 dark:text-red-400">Task not found or failed to load.</p>
         </div>
       </div>
     );
@@ -187,7 +187,7 @@ export default function TaskDetailPage({ params }: Props) {
                 <button
                   onClick={() => retryTask(task._id)}
                   disabled={retrying}
-                  className="rounded-lg border border-amber-800/50 bg-amber-950/30 px-3 py-1.5 text-xs font-medium text-amber-400 transition-colors hover:bg-amber-950/50 disabled:opacity-50"
+                  className="rounded-lg border border-amber-300 bg-amber-50 px-3 py-1.5 text-xs font-medium text-amber-700 transition-colors hover:bg-amber-100 dark:border-amber-800/50 dark:bg-amber-950/30 dark:text-amber-400 dark:hover:bg-amber-950/50 disabled:opacity-50"
                 >
                   {retrying ? 'Retrying…' : '↺ Retry'}
                 </button>
@@ -241,8 +241,8 @@ export default function TaskDetailPage({ params }: Props) {
 
           {task.status === 'completed' && parsedResult !== null && (
             <Row label="result">
-              <div className="rounded-xl border border-emerald-800/50 bg-emerald-950/30 px-3 py-2.5">
-                <pre className="whitespace-pre-wrap break-all font-mono text-xs text-emerald-400">
+              <div className="rounded-xl border border-emerald-300 bg-emerald-50 px-3 py-2.5 dark:border-emerald-800/50 dark:bg-emerald-950/30">
+                <pre className="whitespace-pre-wrap break-all font-mono text-xs text-emerald-700 dark:text-emerald-400">
                   {JSON.stringify(parsedResult, null, 2)}
                 </pre>
               </div>
@@ -251,8 +251,8 @@ export default function TaskDetailPage({ params }: Props) {
 
           {task.status === 'failed' && task.error && (
             <Row label="error">
-              <div className="rounded-xl border border-red-800/50 bg-red-950/30 px-3 py-2.5">
-                <p className="text-xs text-red-400">{task.error}</p>
+              <div className="rounded-xl border border-red-300 bg-red-50 px-3 py-2.5 dark:border-red-800/50 dark:bg-red-950/30">
+                <p className="text-xs text-red-700 dark:text-red-400">{task.error}</p>
               </div>
             </Row>
           )}

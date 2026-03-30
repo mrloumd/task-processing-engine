@@ -47,9 +47,9 @@ export function TaskList({
 
   if (isError) {
     return (
-      <div className="rounded-2xl border border-red-800/50 bg-red-950/30 px-4 py-5">
-        <p className="text-sm font-medium text-red-400">Unable to reach server</p>
-        <p className="mt-0.5 text-xs text-red-500">
+      <div className="rounded-2xl border border-red-300 bg-red-50 px-4 py-5 dark:border-red-800/50 dark:bg-red-950/30">
+        <p className="text-sm font-medium text-red-700 dark:text-red-400">Unable to reach server</p>
+        <p className="mt-0.5 text-xs text-red-600 dark:text-red-500">
           Make sure the NestJS server is running on port 3001.
         </p>
       </div>

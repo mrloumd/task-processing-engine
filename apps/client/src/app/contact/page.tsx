@@ -42,7 +42,7 @@ export default function ContactPage() {
   return (
     <main className="flex-1 pt-16">
       {/* Page header */}
-      <section className="relative overflow-hidden border-b border-white/5">
+      <section className="relative overflow-hidden border-b border-border">
         <div aria-hidden className="pointer-events-none absolute inset-0">
           <div className="absolute -top-20 left-1/2 -translate-x-1/2 h-[200px] w-[500px] rounded-full bg-brand/8 blur-[80px]" />
         </div>
@@ -136,7 +136,7 @@ export default function ContactPage() {
             ) : (
               <form
                 onSubmit={handleSubmit}
-                className="space-y-4 rounded-2xl border border-white/8 bg-white/[0.02] p-6"
+                className="space-y-4 rounded-2xl border border-border bg-surface p-6"
               >
                 {/* Name + Email row */}
                 <div className="grid gap-4 sm:grid-cols-2">
@@ -150,7 +150,7 @@ export default function ContactPage() {
                       onChange={handleChange}
                       required
                       placeholder="Your name"
-                      className="w-full rounded-xl border border-white/8 bg-white/[0.04] px-3.5 py-2.5 text-sm text-foreground placeholder-slate-600 outline-none transition-colors focus:border-brand/50 focus:bg-white/[0.06]"
+                      className="w-full rounded-xl border border-border bg-surface-raised px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted outline-none transition-colors focus:border-brand/50 focus:bg-surface"
                     />
                   </div>
                   <div>
@@ -164,7 +164,7 @@ export default function ContactPage() {
                       onChange={handleChange}
                       required
                       placeholder="you@example.com"
-                      className="w-full rounded-xl border border-white/8 bg-white/[0.04] px-3.5 py-2.5 text-sm text-foreground placeholder-slate-600 outline-none transition-colors focus:border-brand/50 focus:bg-white/[0.06]"
+                      className="w-full rounded-xl border border-border bg-surface-raised px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted outline-none transition-colors focus:border-brand/50 focus:bg-surface"
                     />
                   </div>
                 </div>
@@ -180,7 +180,7 @@ export default function ContactPage() {
                     onChange={handleChange}
                     required
                     placeholder="What's this about?"
-                    className="w-full rounded-xl border border-white/8 bg-white/[0.04] px-3.5 py-2.5 text-sm text-foreground placeholder-slate-600 outline-none transition-colors focus:border-brand/50 focus:bg-white/[0.06]"
+                    className="w-full rounded-xl border border-border bg-surface-raised px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted outline-none transition-colors focus:border-brand/50 focus:bg-surface"
                   />
                 </div>
 
@@ -196,7 +196,7 @@ export default function ContactPage() {
                     required
                     rows={5}
                     placeholder="Tell us more..."
-                    className="w-full resize-none rounded-xl border border-white/8 bg-white/[0.04] px-3.5 py-2.5 text-sm text-foreground placeholder-slate-600 outline-none transition-colors focus:border-brand/50 focus:bg-white/[0.06]"
+                    className="w-full resize-none rounded-xl border border-border bg-surface-raised px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted outline-none transition-colors focus:border-brand/50 focus:bg-surface"
                   />
                 </div>
 

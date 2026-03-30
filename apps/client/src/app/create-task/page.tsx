@@ -267,8 +267,8 @@ export default function CreateTaskPage() {
 
         {/* Error */}
         {isError && (
-          <div className="rounded-xl border border-red-800/50 bg-red-950/30 px-4 py-3">
-            <p className="text-sm text-red-400">
+          <div className="rounded-xl border border-red-300 bg-red-50 px-4 py-3 dark:border-red-800/50 dark:bg-red-950/30">
+            <p className="text-sm text-red-700 dark:text-red-400">
               {error instanceof Error ? error.message : 'Failed to create task. Is the server running?'}
             </p>
           </div>
