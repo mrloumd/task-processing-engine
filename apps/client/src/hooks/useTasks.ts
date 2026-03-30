@@ -9,10 +9,11 @@ import { TERMINAL_STATUSES } from '@task-processing-engine/shared';
 
 // ─── Task list (paginated + filterable) ───────────────────────────────────────
 
-export function useTasks(params?: TasksQueryParams) {
+export function useTasks(params?: TasksQueryParams, refetchInterval?: number) {
   return useQuery({
     queryKey: ['tasks', params],
     queryFn: () => tasksApi.getAll(params),
+    refetchInterval,
   });
 }
 

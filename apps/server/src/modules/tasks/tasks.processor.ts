@@ -23,7 +23,7 @@ const HANDLERS: Record<string, TaskHandlerFn> = {
 
 // ─── Processor ────────────────────────────────────────────────────────────────
 
-@Processor('tasks', { concurrency: 3 })
+@Processor('tasks', { concurrency: 1 })
 export class TasksProcessor extends WorkerHost {
   private readonly logger = new Logger(TasksProcessor.name);
 

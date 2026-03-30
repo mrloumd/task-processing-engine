@@ -47,14 +47,14 @@ export default function DashboardPage() {
             </Link>
             <Link
               href="/tasks"
-              className="inline-flex items-center gap-2 rounded-xl border border-white/10 px-5 py-2.5 text-sm font-medium text-muted transition-colors hover:border-white/20 hover:text-foreground"
+              className="inline-flex items-center gap-2 rounded-xl border border-border px-5 py-2.5 text-sm font-medium text-muted transition-colors hover:border-brand/40 hover:text-foreground"
             >
               View All Tasks
             </Link>
           </div>
 
           {/* Stats row */}
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 border-t border-white/5 pt-8">
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 border-t border-border pt-8">
             {[
               { value: '3',   label: 'Task Types' },
               { value: '3',   label: 'Concurrent Workers' },

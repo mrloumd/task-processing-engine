@@ -4,7 +4,7 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-white/5 bg-[#040e0e]/60 px-6 pb-8 pt-12">
+    <footer className="border-t border-border bg-background/60 px-6 pb-8 pt-12">
       <div className="mx-auto max-w-5xl">
         {/* Top grid */}
         <div className="mb-10 grid grid-cols-2 gap-8 sm:grid-cols-4">
@@ -113,7 +113,7 @@ export function Footer() {
         </div>
 
         {/* Bottom row */}
-        <div className="border-t border-white/5 pt-6">
+        <div className="border-t border-border pt-6">
           <p className="text-xs text-muted">
             © {year}{" "}
             <span className="font-semibold text-brand">Marlou Amada</span>. All

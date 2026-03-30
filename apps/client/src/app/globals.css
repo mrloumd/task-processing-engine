@@ -1,6 +1,23 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ─── Light mode (default) ───────────────────────────────────────────────── */
 :root {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --surface: #ffffff;
+  --surface-raised: #f1f5f9;
+  --border: #e2e8f0;
+  --brand: #1e9aa0;
+  --brand-light: #27b5bc;
+  --brand-dark: #167a7f;
+  --brand-glow: rgba(30, 154, 160, 0.15);
+  --muted: #64748b;
+}
+
+/* ─── Dark mode ──────────────────────────────────────────────────────────── */
+.dark {
   --background: #040e0e;
   --foreground: #f1f5f9;
   --surface: #091818;
@@ -45,5 +62,5 @@ body {
 
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #0e2929; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #163838; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--surface-raised); }

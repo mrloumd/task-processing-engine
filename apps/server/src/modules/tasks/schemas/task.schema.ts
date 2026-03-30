@@ -13,7 +13,7 @@ export interface ActivityEntry {
 
 // ─── Task Schema ──────────────────────────────────────────────────────────────
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } })
 export class Task {
   @Prop({ required: true, trim: true })
   type: string;
@@ -39,13 +39,13 @@ export class Task {
   error: string | null;
 
   @Prop({ type: Number, default: 0, min: 0 })
-  retryCount: number;
+  retry_count: number;
 
   @Prop({ type: Date, default: null })
-  startedAt: Date | null;
+  started_at: Date | null;
 
   @Prop({ type: Date, default: null })
-  completedAt: Date | null;
+  completed_at: Date | null;
 
   @Prop({
     type: [
@@ -58,11 +58,11 @@ export class Task {
     ],
     default: [],
   })
-  activityLog: ActivityEntry[];
+  activity_log: ActivityEntry[];
 
-  // Injected by @Schema({ timestamps: true })
-  createdAt: Date;
-  updatedAt: Date;
+  // Injected by @Schema({ timestamps: ... })
+  created_at: Date;
+  updated_at: Date;
 }
 
 export const TaskSchema = SchemaFactory.createForClass(Task);
@@ -70,5 +70,5 @@ export const TaskSchema = SchemaFactory.createForClass(Task);
 // ─── Indexes ──────────────────────────────────────────────────────────────────
 
 TaskSchema.index({ type: 1 });
-TaskSchema.index({ createdAt: -1 });
-TaskSchema.index({ status: 1, createdAt: -1 });
+TaskSchema.index({ created_at: -1 });
+TaskSchema.index({ status: 1, created_at: -1 });

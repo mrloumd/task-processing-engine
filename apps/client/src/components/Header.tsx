@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { ThemeToggle } from './ThemeToggle';
 
 const NAV_LINKS = [
   { href: '/dashboard',   label: 'Dashboard' },
@@ -18,7 +19,7 @@ export function Header() {
       : pathname.startsWith(href);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-white/5 bg-[#040e0e]/80 backdrop-blur-md">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-6">
 
         {/* Logo */}
@@ -62,10 +63,12 @@ export function Header() {
               </Link>
             );
           })}
+          <ThemeToggle />
         </nav>
 
         {/* Mobile */}
         <div className="flex items-center gap-2 md:hidden">
+          <ThemeToggle />
           <Link
             href="/tasks"
             className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-muted"
