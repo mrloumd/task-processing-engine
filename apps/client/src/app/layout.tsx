@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { Providers } from './providers';
-import { Header } from '@/components/Header';
+import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import './globals.css';
 
@@ -21,8 +21,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       </head>
       <body className="flex min-h-full flex-col bg-background text-foreground">
         <Providers>
-          <Header />
-          <main className="mx-auto w-full max-w-5xl flex-1 px-6 pb-10 pt-24">{children}</main>
+          <Navbar />
+          <main className="flex-1">{children}</main>
           <Footer />
         </Providers>
       </body>

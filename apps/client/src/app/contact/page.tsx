@@ -40,37 +40,33 @@ export default function ContactPage() {
   }
 
   return (
-    <main className="flex-1 pt-16">
+    <div className="flex-1 pt-16">
       {/* Page header */}
       <section className="relative overflow-hidden border-b border-border">
         <div aria-hidden className="pointer-events-none absolute inset-0">
           <div className="absolute -top-20 left-1/2 -translate-x-1/2 h-[200px] w-[500px] rounded-full bg-brand/8 blur-[80px]" />
         </div>
-        <div className="relative mx-auto max-w-3xl px-6 pb-8 pt-10">
+        <div className="relative mx-auto max-w-3xl px-6 pt-10 pb-8">
           <Link
             href="/dashboard"
-            className="group mb-5 inline-flex items-center gap-1.5 text-xs text-muted transition-colors hover:text-foreground"
+            className="inline-flex items-center gap-1.5 text-xs text-muted hover:text-foreground transition-colors mb-5 group"
           >
             <svg
-              className="h-3 w-3 transition-transform group-hover:-translate-x-0.5"
+              className="w-3 h-3 group-hover:-translate-x-0.5 transition-transform"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
               strokeWidth={2}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M10 19l-7-7m0 0l7-7m-7 7h18"
-              />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
             Back to dashboard
           </Link>
-          <h1 className="mb-1 text-2xl font-bold text-foreground sm:text-3xl">
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-1">
             Contact
           </h1>
-          <p className="text-sm text-muted">
-            Got a question about the platform, spotted a bug, or just want to
+          <p className="text-muted text-sm">
+            Got a question, feedback, spotted a bug, or just want to
             connect?
           </p>
         </div>
@@ -254,6 +250,6 @@ export default function ContactPage() {
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }

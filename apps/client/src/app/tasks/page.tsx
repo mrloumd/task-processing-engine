@@ -36,7 +36,7 @@ export default function TasksPage() {
   const hasFilter = status || type || search;
 
   return (
-    <div className="space-y-6">
+    <div className="mx-auto w-full max-w-6xl px-6 pb-10 pt-24 space-y-6">
 
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
