@@ -174,7 +174,7 @@ export default function CreateTaskPage() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6">
+    <div className="mx-auto max-w-2xl px-6 pb-10 pt-24 space-y-6">
 
       {/* Back */}
       <Link href="/dashboard" className="inline-flex items-center gap-1.5 text-xs text-muted transition-colors hover:text-foreground">

@@ -116,7 +116,7 @@ export default function TaskDetailPage({ params }: Props) {
 
   if (isLoading) {
     return (
-      <div className="space-y-4">
+      <div className="mx-auto w-full max-w-6xl px-6 pb-10 pt-24 space-y-4">
         <div className="h-5 w-28 animate-pulse rounded-lg bg-surface-raised" />
         <div className="h-80 animate-pulse rounded-2xl bg-surface-raised" />
       </div>
@@ -125,7 +125,7 @@ export default function TaskDetailPage({ params }: Props) {
 
   if (isError || !task) {
     return (
-      <div className="space-y-4">
+      <div className="mx-auto w-full max-w-6xl px-6 pb-10 pt-24 space-y-4">
         <Link href="/tasks" className="inline-flex items-center gap-1.5 text-sm text-brand hover:underline">
           <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="m15 18-6-6 6-6" /></svg>
           Back to tasks
@@ -146,7 +146,7 @@ export default function TaskDetailPage({ params }: Props) {
   catch { parsedResult = task.result; }
 
   return (
-    <div className="space-y-6">
+    <div className="mx-auto w-full max-w-6xl px-6 pb-10 pt-24 space-y-6">
 
       {/* Top bar */}
       <div className="flex items-center justify-between">

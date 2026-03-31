@@ -10,7 +10,7 @@ export default function DashboardPage() {
   const { data: metrics } = useMetrics();
 
   return (
-    <div className="space-y-10">
+    <div className="mx-auto w-full max-w-6xl px-6 pb-10 pt-24 space-y-10">
 
       {/* Hero */}
       <section className="relative overflow-hidden">
